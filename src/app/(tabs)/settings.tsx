@@ -19,6 +19,8 @@ import {
 
 export default function Settings() {
   const { user, signOut } = useAuth();
+  console.log("User data:", user); // Adicionado para debugar os dados do usuário
+
   const navigation = useNavigation();
 
   const [name, setName] = useState(user?.name);
@@ -28,7 +30,6 @@ export default function Settings() {
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      // Exemplo: await api.put('/users/profile', { name });
       Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
     } catch (error) {
       Alert.alert("Erro", "Não foi possível atualizar o perfil.");
@@ -63,7 +64,7 @@ export default function Settings() {
           >
             <Image
               source={{
-                uri: user?.avatar_url,
+                uri: user?.avatarUrl,
               }}
               style={styles.avatar}
             />

@@ -2,7 +2,7 @@ export interface User {
   id: String;
   name: string;
   email: string;
-  avatar_url: string;
+  avatarUrl: string;
   role: string;
 }
 
