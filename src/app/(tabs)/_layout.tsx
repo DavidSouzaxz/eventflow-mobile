@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { useAuth } from "../contexts/AuthContexts";
 
 export default function TabLayout() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const router = useRouter();
 
   return (
@@ -23,15 +23,26 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="scanner"
-        options={{
-          title: "Ler QR Code",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="qr-code-outline" size={24} color={color} />
-          ),
-        }}
-      />
+
+      {user?.role === "ADMIN" ? (
+        <Tabs.Screen
+          name="scanner"
+          options={{
+            title: "Ler QR Code",
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="qr-code-outline" size={24} color={color} />
+            ),
+          }}
+        />
+      ) : (
+        <Tabs.Screen
+          name="scanner"
+          options={{
+            href: null,
+          }}
+        />
+      )}
+
       <Tabs.Screen
         name="logout"
         options={{
