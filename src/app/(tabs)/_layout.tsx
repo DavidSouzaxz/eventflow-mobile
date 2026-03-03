@@ -1,10 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { Alert } from "react-native";
 import { useAuth } from "../contexts/AuthContexts";
 
 export default function TabLayout() {
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   return (
@@ -44,28 +43,12 @@ export default function TabLayout() {
       )}
 
       <Tabs.Screen
-        name="logout"
+        name="settings"
         options={{
-          title: "Sair",
+          title: "Configurações",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="exit-outline" size={24} color={color} />
+            <Ionicons name="settings-outline" size={24} color={color} />
           ),
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            Alert.alert("Sair", "Deseja realmente sair da conta?", [
-              { text: "Cancelar", style: "cancel" },
-              {
-                text: "Sair",
-                style: "destructive",
-                onPress: async () => {
-                  await signOut();
-                  router.replace("/(auth)");
-                },
-              },
-            ]);
-          },
         }}
       />
     </Tabs>
