@@ -12,10 +12,12 @@ import {
   Text,
   View,
 } from "react-native";
-import { storage } from "../services/storage";
+import { useAuth } from "../contexts/AuthContexts";
 import { AuthResponse } from "../types/auth";
 
 export default function Index() {
+  const { signIn } = useAuth(); // Adicionado para usar o contexto de autenticação
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,13 +36,13 @@ export default function Index() {
       });
       const { token, user } = response.data;
 
-      await storage.saveAuthData(token, user);
+      await signIn(token, user); // Substituído para usar o método signIn do contexto
 
       router.replace("/(tabs)");
     } catch (err) {
       setLoading(false);
       alert("Erro ao fazer login. Verifique suas credencias.");
-      err;
+      console.error("Login error:", err);
     }
   }
 

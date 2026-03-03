@@ -2,6 +2,7 @@ import { useAuth } from "@/app/contexts/AuthContexts";
 import { Button } from "@/components/Button";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -19,7 +20,7 @@ import {
 
 export default function Settings() {
   const { user, signOut } = useAuth();
-  console.log("User data:", user); // Adicionado para debugar os dados do usuário
+  console.log("User data:", user);
 
   const navigation = useNavigation();
 
@@ -129,7 +130,12 @@ export default function Settings() {
 
         {/* Conta */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => {
+            Alert.alert("Confirmação", "Deseja realmente sair da conta?", [
+              { text: "Cancelar", style: "cancel" },
+              { text: "Sair", style: "destructive", onPress: () => { signOut(), router.replace("/(auth)") } },
+            ]);
+          }}>
             <Ionicons name="log-out-outline" size={22} color="#EF4444" />
             <Text style={styles.logoutText}>Sair da Conta</Text>
           </TouchableOpacity>
