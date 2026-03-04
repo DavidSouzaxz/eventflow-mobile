@@ -16,7 +16,7 @@ import { useAuth } from "../contexts/AuthContexts";
 import { AuthResponse } from "../types/auth";
 
 export default function Index() {
-  const { signIn } = useAuth(); // Adicionado para usar o contexto de autenticação
+  const { signIn } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +36,7 @@ export default function Index() {
       });
       const { token, user } = response.data;
 
-      await signIn(token, user); // Substituído para usar o método signIn do contexto
+      await signIn(token, user);
 
       router.replace("/(tabs)");
     } catch (err) {

@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     async function loadStorage() {
       const storagedUser = await storage.getUser();
-      const storagedToken = await storage.getToken(); // Corrigido para obter o token corretamente
+      const storagedToken = await storage.getToken();
 
       if (storagedToken && storagedUser) {
         setUser(storagedUser);
