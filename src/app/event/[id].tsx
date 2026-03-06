@@ -13,23 +13,30 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useColorScheme,
 } from "react-native";
 
 import { Event } from "@/app/types/events";
 import { Input } from "@/components/Input";
+import { Colors } from "@/constants/Colors"; // Importando seu arquivo de cores
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  const theme = useColorScheme() ?? "light";
+  const colors = Colors[theme];
+
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [coupon, setCoupon] = useState("");
-  const PRICE_PER_TICKET = 5.0;
+
+  // Usando o preço do evento vindo da API
+  const PRICE_PER_TICKET = event?.price || 0;
 
   useEffect(() => {
-    setLoading(true);
     async function fetchEvent() {
+      setLoading(true);
       try {
         const response = await api.get<Event>(`/events/${id}`);
         setEvent(response.data);
@@ -45,13 +52,14 @@ export default function EventDetails() {
   const handleReserve = async () => {
     setLoading(true);
     try {
-      const bookignBody = {
+      const bookingBody = {
         eventId: event?.id,
         quantity: quantity,
-        coupoCode: coupon,
+        couponCode: coupon, // Corrigido erro de digitação
         batchId: event?.batches[0]?.id || null,
       };
-      await api.post("/bookings", bookignBody);
+
+      await api.post("/bookings", bookingBody);
 
       Alert.alert(
         "Sucesso",
@@ -67,25 +75,27 @@ export default function EventDetails() {
 
   if (loading && !event)
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#032ad7" />
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
 
   if (!event)
     return (
-      <View style={styles.center}>
-        <Text>Evento não encontrado.</Text>
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <Text style={{ color: colors.text }}>Evento não encontrado.</Text>
       </View>
     );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar
+        barStyle={theme === "dark" ? "light-content" : "dark-content"}
+      />
 
       <ScrollView
         bounces={false}
-        contentContainerStyle={{ paddingBottom: 190 }}
+        contentContainerStyle={{ paddingBottom: 220 }}
       >
         <View style={styles.header}>
           <Image source={{ uri: event.imageUrl }} style={styles.banner} />
@@ -98,93 +108,142 @@ export default function EventDetails() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.content}>
-          <Text style={styles.title}>{event.title}</Text>
+        <View style={[styles.content, { backgroundColor: colors.background }]}>
+          <Text style={[styles.title, { color: colors.text }]}>
+            {event.title}
+          </Text>
 
-          <View style={styles.cardInfo}>
+          <View
+            style={[
+              styles.cardInfo,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
             <View style={styles.infoRow}>
-              <View style={[styles.iconBox, { backgroundColor: "#EEF2FF" }]}>
-                <Ionicons name="calendar" size={22} color="#032ad7" />
+              <View
+                style={[
+                  styles.iconBox,
+                  { backgroundColor: theme === "dark" ? "#1E293B" : "#EEF2FF" },
+                ]}
+              >
+                <Ionicons name="calendar" size={22} color={colors.primary} />
               </View>
               <View>
                 <Text style={styles.infoLabel}>Data e Horário</Text>
-                <Text style={styles.infoValue}>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
                   {formatDate(event.date).full}
                 </Text>
               </View>
             </View>
 
             <View style={[styles.infoRow, { marginTop: 20 }]}>
-              <View style={[styles.iconBox, { backgroundColor: "#F0FDF4" }]}>
+              <View
+                style={[
+                  styles.iconBox,
+                  { backgroundColor: theme === "dark" ? "#064E3B" : "#F0FDF4" },
+                ]}
+              >
                 <Ionicons name="location" size={22} color="#16A34A" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.infoLabel}>Localização</Text>
-                <Text style={styles.infoValue}>{event.location}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
+                  {event.location}
+                </Text>
               </View>
             </View>
           </View>
 
-          <Text style={styles.sectionTitle}>Sobre o evento</Text>
-          <Text style={styles.description}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Sobre o evento
+          </Text>
+          <Text
+            style={[styles.description, { color: colors.text, opacity: 0.7 }]}
+          >
             {event.description || "Nenhuma descrição detalhada fornecida."}
           </Text>
         </View>
       </ScrollView>
 
       {event.capacity === 0 ? (
-        <View style={styles.solOut}>
-          <Text style={styles.textOut}>Ingressos Esgotados</Text>
+        <View
+          style={[
+            styles.solOut,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
+          <Text style={[styles.textOut, { color: "#EF4444" }]}>
+            Ingressos Esgotados
+          </Text>
         </View>
       ) : (
-        <View style={styles.footer}>
+        <View
+          style={[
+            styles.footer,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
           <View style={styles.footerTop}>
             <View>
               <Text style={styles.priceLabel}>Preço Total</Text>
-              <Text style={styles.priceValue}>
+              <Text style={[styles.priceValue, { color: colors.primary }]}>
                 R$ {(PRICE_PER_TICKET * quantity).toFixed(2)}
               </Text>
             </View>
 
-            <View style={styles.quantitySelector}>
+            <View
+              style={[
+                styles.quantitySelector,
+                { backgroundColor: colors.background },
+              ]}
+            >
               <TouchableOpacity
                 onPress={() => setQuantity((q) => Math.max(1, q - 1))}
-                style={styles.qtyBtn}
+                style={[styles.qtyBtn, { backgroundColor: colors.card }]}
               >
-                <Ionicons name="remove" size={20} color="#1E293B" />
+                <Ionicons name="remove" size={20} color={colors.text} />
               </TouchableOpacity>
 
-              <Text style={styles.qtyText}>{quantity}</Text>
+              <Text style={[styles.qtyText, { color: colors.text }]}>
+                {quantity}
+              </Text>
 
               <TouchableOpacity
                 onPress={() => setQuantity((q) => q + 1)}
-                style={styles.qtyBtn}
+                style={[styles.qtyBtn, { backgroundColor: colors.card }]}
                 disabled={event.ticketLimitPerPerson <= quantity}
               >
-                <Ionicons name="add" size={20} color="#1E293B" />
+                <Ionicons name="add" size={20} color={colors.text} />
               </TouchableOpacity>
             </View>
           </View>
+
           <View style={styles.couponContainer}>
             <Input
               placeholder="CUPOM"
-              style={styles.coupon}
+              style={[
+                styles.coupon,
+                { borderColor: colors.border, color: colors.primary },
+              ]}
               onChangeText={setCoupon}
+              placeholderTextColor={theme === "dark" ? "#475569" : "#94A3B8"}
             />
           </View>
-          {!loading ? (
-            <TouchableOpacity
-              style={styles.reserveButton}
-              onPress={handleReserve}
-            >
-              <Ionicons name="cart-outline" size={20} color="#FFF" />
-              <Text style={styles.reserveButtonText}>Confirmar Reserva</Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.reserveButton}>
-              <ActivityIndicator size="large" color="#fff" />
-            </View>
-          )}
+
+          <TouchableOpacity
+            style={[styles.reserveButton, { backgroundColor: colors.primary }]}
+            onPress={handleReserve}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <>
+                <Ionicons name="cart-outline" size={20} color="#FFF" />
+                <Text style={styles.reserveButtonText}>Confirmar Reserva</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -192,7 +251,7 @@ export default function EventDetails() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF" },
+  container: { flex: 1 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: { height: 280 },
   banner: { width: "100%", height: "100%" },
@@ -210,26 +269,23 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 10,
   },
   content: {
     padding: 24,
     marginTop: -30,
-    backgroundColor: "#FFF",
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
   },
   title: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#1E293B",
     marginBottom: 20,
   },
   cardInfo: {
-    backgroundColor: "#F8FAFC",
     padding: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#F1F5F9",
     marginBottom: 24,
   },
   infoRow: { flexDirection: "row", alignItems: "center", gap: 12 },
@@ -246,24 +302,21 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
   },
-  infoValue: { fontSize: 15, color: "#334155", fontWeight: "600" },
+  infoValue: { fontSize: 15, fontWeight: "600" },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1E293B",
     marginBottom: 10,
   },
-  description: { fontSize: 15, color: "#64748B", lineHeight: 22 },
+  description: { fontSize: 15, lineHeight: 22 },
 
   footer: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    backgroundColor: "#FFF",
     padding: 20,
     paddingBottom: 35,
     borderTopWidth: 1,
-    borderColor: "#F1F5F9",
     elevation: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -3 },
@@ -277,36 +330,32 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   priceLabel: { color: "#64748B", fontSize: 12 },
-  priceValue: { color: "#032ad7", fontSize: 22, fontWeight: "900" },
+  priceValue: { fontSize: 22, fontWeight: "900" },
 
   quantitySelector: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F1F5F9",
     borderRadius: 12,
     padding: 4,
   },
   qtyBtn: {
     width: 32,
     height: 32,
-    backgroundColor: "#FFF",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 2,
   },
   qtyText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1E293B",
     paddingHorizontal: 15,
   },
   reserveButton: {
-    backgroundColor: "#032ad7",
     height: 54,
     borderRadius: 15,
     flexDirection: "row",
@@ -319,35 +368,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    backgroundColor: "#f5f5f5",
     padding: 20,
     paddingBottom: 35,
     borderTopWidth: 1,
-    borderColor: "#F1F5F9",
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    alignItems: "center",
   },
   textOut: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    marginBottom: 15,
-    fontWeight: 700,
+    fontWeight: "700",
     fontSize: 20,
   },
   couponContainer: {
-    paddingBottom: 7,
+    paddingBottom: 12,
   },
   coupon: {
-    padding: 9,
+    padding: 12,
     borderWidth: 1,
-    borderRadius: 10,
-    borderColor: "#e0e0e0",
-    color: "#032ad7",
-    fontWeight: 500,
+    borderRadius: 12,
+    fontSize: 14,
   },
 });

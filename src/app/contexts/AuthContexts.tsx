@@ -5,6 +5,8 @@ import { User } from "../types/auth";
 interface AuthContextData {
   signed: boolean;
   user: User | null;
+  theme: "light" | "dark";
+  toggleTheme(): Promise<void>;
   signIn(token: string, user: User): Promise<void>;
   signOut(): Promise<void>;
   loading: boolean;
@@ -17,12 +19,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
     async function loadStorage() {
       const storagedUser = await storage.getUser();
       const storagedToken = await storage.getToken();
+      const savedTheme = await storage.getTheme();
 
+      if (savedTheme) {
+        setTheme(savedTheme as "light" | "dark");
+      }
       if (storagedToken && storagedUser) {
         setUser(storagedUser);
       }
@@ -30,6 +37,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     loadStorage();
   }, []);
+
+  async function toggleTheme() {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    await storage.saveTheme(newTheme);
+  }
 
   async function signIn(token: string, user: User) {
     setUser(user);
@@ -43,7 +56,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ signed: !!user, user, signIn, signOut, loading }}
+      value={{
+        signed: !!user,
+        user,
+        theme,
+        toggleTheme,
+        signIn,
+        signOut,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>

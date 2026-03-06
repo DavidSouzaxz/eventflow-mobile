@@ -1,16 +1,31 @@
+import { Colors } from "@/constants/Colors"; // Importe suas cores
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs, useRouter } from "expo-router";
+import { Tabs } from "expo-router";
 import { useAuth } from "../contexts/AuthContexts";
 
 export default function TabLayout() {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { user, theme } = useAuth(); // Pegando o tema global
+  const colors = Colors[theme];
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#032ad7",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: theme === "dark" ? "#64748B" : "#94A3B8",
         headerShown: true,
+        // Estilo da Tab Bar (Rodapé)
+        tabBarStyle: {
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+        },
+        // Estilo do Header (Topo)
+        headerStyle: {
+          backgroundColor: colors.card,
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
       }}
     >
       <Tabs.Screen

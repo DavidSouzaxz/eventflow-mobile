@@ -1,6 +1,7 @@
 import { api } from "@/app/services/api";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { Colors } from "@/constants/Colors";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
@@ -16,7 +17,8 @@ import { useAuth } from "../contexts/AuthContexts";
 import { AuthResponse } from "../types/auth";
 
 export default function Index() {
-  const { signIn } = useAuth();
+  const { signIn, theme } = useAuth();
+  const colors = Colors[theme];
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +39,6 @@ export default function Index() {
       const { token, user } = response.data;
 
       await signIn(token, user);
-
       router.replace("/(tabs)");
     } catch (err) {
       setLoading(false);
@@ -48,16 +49,22 @@ export default function Index() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: colors.background }} // Corrigido aqui
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView
-        contentContainerStyle={styles.contatiner}
+        contentContainerStyle={[
+          styles.contatiner,
+          { backgroundColor: colors.background },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.form}>
-          <Image style={styles.img} source={require("../../assets/img1.png")} />
+          <Image
+            style={styles.img}
+            source={require("../../assets/im1-copy.png")}
+          />
 
           <Input
             placeholder="E-mail"
@@ -76,9 +83,13 @@ export default function Index() {
             disabled={loading}
             onPress={handleLogin}
           />
-          <Text style={styles.footerText}>
-            Ainda não tem conta?
-            <Link href="/signup" style={styles.footeLink}>
+
+          <Text style={[styles.footerText, { color: colors.text }]}>
+            Ainda não tem conta?{" "}
+            <Link
+              href="/signup"
+              style={[styles.footeLink, { color: colors.primary }]}
+            >
               Cadastre-se
             </Link>
           </Text>
@@ -91,15 +102,8 @@ export default function Index() {
 const styles = StyleSheet.create({
   contatiner: {
     flexGrow: 1,
-    backgroundColor: "#FDFDFD",
     padding: 32,
     justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "center",
-    alignItems: "center",
   },
   img: {
     height: 350,
@@ -108,14 +112,6 @@ const styles = StyleSheet.create({
     marginTop: 62,
     borderRadius: 45,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 600,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 15,
-  },
   form: {
     marginTop: 24,
     gap: 12,
@@ -123,10 +119,8 @@ const styles = StyleSheet.create({
   footerText: {
     textAlign: "center",
     marginTop: 24,
-    color: "#585860",
   },
   footeLink: {
-    color: "#032ad7",
-    fontWeight: 700,
+    fontWeight: "700",
   },
 });

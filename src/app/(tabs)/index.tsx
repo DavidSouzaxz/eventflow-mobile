@@ -1,5 +1,6 @@
 import { api } from "@/app/services/api";
 import { EventCard } from "@/components/EventCard";
+import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -11,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAuth } from "../contexts/AuthContexts";
 
 interface Event {
   id: string;
@@ -26,6 +28,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
+
+  const { theme } = useAuth();
+  const colors = Colors[theme];
 
   async function fetchEvents() {
     try {
@@ -50,15 +55,17 @@ export default function Home() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color="#032ad7" />
-        <Text style={{ marginTop: 10 }}>Acordando o servidor...</Text>
+        <Text style={{ marginTop: 10, backgroundColor: colors.text }}>
+          Acordando o servidor...
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={events}
         keyExtractor={(item) => item.id}
@@ -99,7 +106,6 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
   },
   center: {
     flex: 1,
@@ -112,7 +118,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   emptyText: {
-    color: "#64748B",
     textAlign: "center",
   },
 });

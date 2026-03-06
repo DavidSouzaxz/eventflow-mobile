@@ -1,3 +1,5 @@
+import { useAuth } from "@/app/contexts/AuthContexts";
+import { Colors } from "@/constants/Colors";
 import { formatDate } from "@/utils/formatDate";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -10,55 +12,81 @@ interface Props {
 }
 
 export function EventCard({ title, date, location, imageUrl }: Props) {
+  const { theme } = useAuth();
+  const colors = Colors[theme];
+
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+        },
+      ]}
+    >
       <Image
         source={{ uri: imageUrl }}
-        style={styles.img}
+        style={[
+          styles.img,
+          { backgroundColor: theme === "dark" ? "#334155" : "#F1F5F9" },
+        ]}
         defaultSource={require("@/assets/img2.png")}
       />
+
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
 
         <View style={styles.infoRow}>
-          <Ionicons name="calendar-outline" size={14} color="#64748B" />
-          <Text style={styles.infoText}>{formatDate(date).full}</Text>
+          <Ionicons
+            name="calendar-outline"
+            size={14}
+            color={colors.text}
+            style={{ opacity: 0.7 }}
+          />
+          <Text style={[styles.infoText, { color: colors.text, opacity: 0.8 }]}>
+            {formatDate(date).full}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
-          <Ionicons name="location-outline" size={14} color="#64748B" />
-          <Text style={styles.infoText}>{location}</Text>
+          <Ionicons
+            name="location-outline"
+            size={14}
+            color={colors.text}
+            style={{ opacity: 0.7 }}
+          />
+          <Text style={[styles.infoText, { color: colors.text, opacity: 0.8 }]}>
+            {location}
+          </Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+
+      <Ionicons name="chevron-forward" size={20} color={colors.border} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFF",
     borderRadius: 16,
     padding: 12,
     marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E2E8F0",
     gap: 12,
   },
   content: { flex: 1 },
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1E293B",
     marginBottom: 8,
   },
   img: {
     width: 70,
-    height: "100%",
+    height: 70, // Importante: imagem precisa de altura fixa ou definida no flex
     borderRadius: 12,
-    backgroundColor: "#F1F5F9",
   },
   infoRow: {
     flexDirection: "row",
@@ -68,6 +96,5 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: "#64748B",
   },
 });

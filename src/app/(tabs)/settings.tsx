@@ -1,8 +1,7 @@
 import { useAuth } from "@/app/contexts/AuthContexts";
-import { Button } from "@/components/Button";
+import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -19,13 +18,11 @@ import {
 } from "react-native";
 
 export default function Settings() {
-  const { user, signOut } = useAuth();
-  console.log("User data:", user);
+  const { user, signOut, theme, toggleTheme } = useAuth();
+  const colors = Colors[theme];
 
   const navigation = useNavigation();
-
   const [name, setName] = useState(user?.name);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSaveProfile = async () => {
@@ -39,191 +36,145 @@ export default function Settings() {
     }
   };
 
-  const handleChangePhoto = () => {
-    Alert.alert("Alterar Foto", "Abrir galeria de imagens...");
-    // Aqui você usaria o expo-image-picker
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Button
-          label="Voltar"
-          style={styles.buttonRollback}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-        {/* Seção do Avatar */}
+        <TouchableOpacity
+          style={[styles.buttonRollback, { backgroundColor: colors.primary }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={{ color: "#FFF", fontWeight: "bold" }}>Voltar</Text>
+        </TouchableOpacity>
+
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={handleChangePhoto}
-            style={styles.avatarContainer}
-          >
+          <View style={styles.avatarContainer}>
             <Image
               source={{
                 uri: user?.avatarUrl,
               }}
-              style={styles.avatar}
+              style={[styles.avatar, { backgroundColor: colors.card }]}
             />
-            <View style={styles.editBadge}>
+            <View
+              style={[
+                styles.editBadge,
+                {
+                  backgroundColor: colors.primary,
+                  borderColor: colors.background,
+                },
+              ]}
+            >
               <Ionicons name="camera" size={16} color="#FFF" />
             </View>
-          </TouchableOpacity>
-          <Text style={styles.userEmail}>{user?.email}</Text>
-        </View>
-
-        {/* Formulário de Perfil */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Dados Pessoais</Text>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nome Completo</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Seu nome"
-            />
           </View>
+          <Text style={[styles.userEmail, { color: colors.text }]}>
+            {user?.email}
+          </Text>
+        </View>
+
+        {/* Card de Dados */}
+        <View style={[styles.section, { backgroundColor: colors.card }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Dados Pessoais
+          </Text>
+          <Text style={[styles.label, { color: colors.text }]}>
+            Nome Completo
+          </Text>
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: colors.background, color: colors.text },
+            ]}
+            value={name}
+            onChangeText={setName}
+          />
           <TouchableOpacity
-            style={styles.saveButton}
+            style={[styles.saveButton, { backgroundColor: colors.primary }]}
             onPress={handleSaveProfile}
-            disabled={loading}
           >
-            <Text style={styles.saveButtonText}>
-              {loading ? "Salvando..." : "Salvar Alterações"}
-            </Text>
+            <Text style={styles.saveButtonText}>Salvar Alterações</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Preferências do App */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preferências</Text>
+        {/* Card de Preferências */}
+        <View style={[styles.section, { backgroundColor: colors.card }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Preferências
+          </Text>
 
           <View style={styles.row}>
             <View style={styles.rowInfo}>
-              <Ionicons name="moon-outline" size={22} color="#1E293B" />
-              <Text style={styles.rowText}>Modo Escuro</Text>
+              <Ionicons name="moon-outline" size={22} color={colors.text} />
+              <Text style={[styles.rowText, { color: colors.text }]}>
+                Modo Escuro
+              </Text>
             </View>
             <Switch
-              value={isDarkMode}
-              onValueChange={setIsDarkMode}
-              trackColor={{ false: "#CBD5E1", true: "#032ad7" }}
+              value={theme === "dark"}
+              onValueChange={toggleTheme}
+              trackColor={{ false: "#CBD5E1", true: colors.primary }}
             />
           </View>
-
-          <TouchableOpacity style={styles.row}>
-            <View style={styles.rowInfo}>
-              <Ionicons
-                name="notifications-outline"
-                size={22}
-                color="#1E293B"
-              />
-              <Text style={styles.rowText}>Notificações</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
-          </TouchableOpacity>
         </View>
 
-        {/* Conta */}
-        <View style={styles.section}>
-          <TouchableOpacity style={styles.logoutButton} onPress={() => {
-            Alert.alert("Confirmação", "Deseja realmente sair da conta?", [
-              { text: "Cancelar", style: "cancel" },
-              { text: "Sair", style: "destructive", onPress: () => { signOut(), router.replace("/(auth)") } },
-            ]);
-          }}>
-            <Ionicons name="log-out-outline" size={22} color="#EF4444" />
-            <Text style={styles.logoutText}>Sair da Conta</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Botão Sair */}
+        <TouchableOpacity
+          style={[
+            styles.section,
+            styles.logoutButton,
+            { backgroundColor: colors.card },
+          ]}
+          onPress={() => signOut()}
+        >
+          <Ionicons name="log-out-outline" size={22} color="#EF4444" />
+          <Text style={styles.logoutText}>Sair da Conta</Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8FAFC" },
-  scrollContent: { padding: 20, paddingBottom: 40 },
+  container: { flex: 1 },
+  scrollContent: { padding: 20 },
   header: { alignItems: "center", marginVertical: 30 },
   avatarContainer: { position: "relative" },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50, // Para ficar redonda
-    backgroundColor: "#EEE",
-  },
+  avatar: { width: 100, height: 100, borderRadius: 50 },
   editBadge: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    backgroundColor: "#032ad7",
     padding: 8,
     borderRadius: 20,
     borderWidth: 3,
-    borderColor: "#F8FAFC",
   },
-  userEmail: { marginTop: 10, color: "#64748B", fontSize: 14 },
-  section: {
-    backgroundColor: "#FFF",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1E293B",
-    marginBottom: 20,
-  },
-  label: { fontSize: 13, color: "#64748B", marginBottom: 8, fontWeight: "500" },
-  input: {
-    backgroundColor: "#F1F5F9",
-    padding: 12,
-    borderRadius: 12,
-    fontSize: 16,
-    color: "#1E293B",
-  },
+  userEmail: { marginTop: 10, fontSize: 14, opacity: 0.7 },
+  section: { borderRadius: 20, padding: 20, marginBottom: 20 },
+  sectionTitle: { fontSize: 16, fontWeight: "700", marginBottom: 20 },
+  label: { fontSize: 13, marginBottom: 8 },
+  input: { padding: 12, borderRadius: 12, fontSize: 16 },
   saveButton: {
-    backgroundColor: "#032ad7",
     padding: 15,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 20,
   },
-  saveButtonText: { color: "#FFF", fontWeight: "700", fontSize: 15 },
+  saveButtonText: { color: "#FFF", fontWeight: "700" },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 12,
   },
   rowInfo: { flexDirection: "row", alignItems: "center", gap: 12 },
-  rowText: { fontSize: 16, color: "#1E293B", fontWeight: "500" },
-  logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    justifyContent: "center",
-    paddingVertical: 10,
-  },
-  logoutText: { color: "#EF4444", fontWeight: "700", fontSize: 16 },
-  inputGroup: {},
+  rowText: { fontSize: 16, fontWeight: "500" },
+  logoutButton: { flexDirection: "row", justifyContent: "center", gap: 12 },
+  logoutText: { color: "#EF4444", fontWeight: "700" },
   buttonRollback: {
-    color: "#032ad7",
-    backgroundColor: "#032ad7",
     width: 80,
-    borderRadius: 5,
-    flex: 1,
-    justifyContent: "center",
+    borderRadius: 8,
+    padding: 8,
     alignItems: "center",
-    padding: 5,
   },
 });
