@@ -74,7 +74,6 @@ export default function Settings() {
           </Text>
         </View>
 
-        {/* Card de Dados */}
         <View style={[styles.section, { backgroundColor: colors.card }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Dados Pessoais
@@ -126,7 +125,23 @@ export default function Settings() {
             styles.logoutButton,
             { backgroundColor: colors.card },
           ]}
-          onPress={() => signOut()}
+          onPress={() => {
+            Alert.alert(
+              "Sair da conta",
+              "Tem certeza que deseja encerrar sua sessão?",
+              [
+                {
+                  text: "Cancelar",
+                  style: "cancel",
+                },
+                {
+                  text: "Sair",
+                  style: "destructive",
+                  onPress: () => signOut(), // Chama a função que limpa storage e redireciona
+                },
+              ],
+            );
+          }}
         >
           <Ionicons name="log-out-outline" size={22} color="#EF4444" />
           <Text style={styles.logoutText}>Sair da Conta</Text>

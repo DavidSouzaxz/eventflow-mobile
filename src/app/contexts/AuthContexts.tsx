@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 import { storage } from "../services/storage";
 import { User } from "../types/auth";
@@ -52,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   async function signOut() {
     await storage.clear();
     setUser(null);
+    router.replace("/(auth)");
   }
 
   return (

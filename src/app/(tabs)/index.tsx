@@ -57,7 +57,7 @@ export default function Home() {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color="#032ad7" />
-        <Text style={{ marginTop: 10, backgroundColor: colors.text }}>
+        <Text style={{ marginTop: 10, color: colors.text }}>
           Acordando o servidor...
         </Text>
       </View>
