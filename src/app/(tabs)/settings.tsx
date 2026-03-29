@@ -46,7 +46,12 @@ export default function Settings() {
           style={[styles.buttonRollback, { backgroundColor: colors.primary }]}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back" size={28} color="#FFF" />
+          <Ionicons
+            name="chevron-back"
+            size={28}
+            color="#FFF"
+            style={styles.iconBack}
+          />
         </TouchableOpacity>
 
         <View style={styles.header}>
@@ -193,5 +198,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
+  },
+  iconBack: {
+    marginRight: 2,
   },
 });
