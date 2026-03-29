@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -7,12 +8,17 @@ import {
 
 type ButtonProps = TouchableOpacityProps & {
   label: string;
+  loading: boolean;
 };
 
-export function Button({ label, ...rest }: ButtonProps) {
+export function Button({ label, loading, ...rest }: ButtonProps) {
   return (
     <TouchableOpacity style={style.container} activeOpacity={0.7} {...rest}>
-      <Text style={style.label}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color="#fff" />
+      ) : (
+        <Text style={style.label}>{label}</Text>
+      )}
     </TouchableOpacity>
   );
 }

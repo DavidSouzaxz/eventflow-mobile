@@ -79,9 +79,10 @@ export default function Index() {
           />
 
           <Button
-            label={loading ? "Carregando..." : "Entrar"}
+            label="Entrar"
             disabled={loading}
             onPress={handleLogin}
+            loading={loading}
           />
 
           <Text style={[styles.footerText, { color: colors.text }]}>
