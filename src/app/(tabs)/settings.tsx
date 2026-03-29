@@ -95,11 +95,13 @@ export default function Settings() {
         </TouchableOpacity>
 
         <View style={styles.header}>
-          <View style={styles.avatarContainer}>
+          <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
             <Image
-              source={{
-                uri: user?.avatarUrl,
-              }}
+              source={
+                user?.avatarUrl || imageUrl
+                  ? { uri: user?.avatarUrl || imageUrl }
+                  : require("../../assets/avatar-placeholder.png")
+              }
               style={[styles.avatar, { backgroundColor: colors.card }]}
             />
             <View
@@ -113,7 +115,7 @@ export default function Settings() {
             >
               <Ionicons name="camera" size={16} color="#FFF" />
             </View>
-          </View>
+          </TouchableOpacity>
           <Text style={[styles.userEmail, { color: colors.text }]}>
             {user?.email}
           </Text>

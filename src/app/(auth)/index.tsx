@@ -63,7 +63,7 @@ export default function Index() {
         <View style={styles.form}>
           <Image
             style={styles.img}
-            source={require("../../assets/im1-copy.png")}
+            source={require("../../assets/img1-copy.png")}
           />
 
           <Input
