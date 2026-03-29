@@ -46,7 +46,7 @@ export default function Settings() {
           style={[styles.buttonRollback, { backgroundColor: colors.primary }]}
           onPress={() => navigation.goBack()}
         >
-          <Text style={{ color: "#FFF", fontWeight: "bold" }}>Voltar</Text>
+          <Ionicons name="chevron-back" size={28} color="#FFF" />
         </TouchableOpacity>
 
         <View style={styles.header}>
@@ -187,9 +187,11 @@ const styles = StyleSheet.create({
   logoutButton: { flexDirection: "row", justifyContent: "center", gap: 12 },
   logoutText: { color: "#EF4444", fontWeight: "700" },
   buttonRollback: {
-    width: 80,
-    borderRadius: 8,
-    padding: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
     alignItems: "center",
+    zIndex: 10,
   },
 });

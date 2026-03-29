@@ -18,7 +18,7 @@ import {
 
 import { Event } from "@/app/types/events";
 import { Input } from "@/components/Input";
-import { Colors } from "@/constants/Colors"; // Importando seu arquivo de cores
+import { Colors } from "@/constants/Colors"; //
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
@@ -31,7 +31,6 @@ export default function EventDetails() {
   const [quantity, setQuantity] = useState(1);
   const [coupon, setCoupon] = useState("");
 
-  // Usando o preço do evento vindo da API
   const PRICE_PER_TICKET = event?.price || 0;
 
   useEffect(() => {
@@ -55,7 +54,7 @@ export default function EventDetails() {
       const bookingBody = {
         eventId: event?.id,
         quantity: quantity,
-        couponCode: coupon, // Corrigido erro de digitação
+        couponCode: coupon,
         batchId: event?.batches[0]?.id || null,
       };
 
