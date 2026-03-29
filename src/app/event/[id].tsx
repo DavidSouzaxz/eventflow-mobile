@@ -13,17 +13,17 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 
 import { Event } from "@/app/types/events";
 import { Input } from "@/components/Input";
-import { Colors } from "@/constants/Colors"; //
+import { Colors } from "@/constants/Colors";
+import { useAuth } from "../contexts/AuthContexts";
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const theme = useColorScheme() ?? "light";
+  const { theme } = useAuth();
   const colors = Colors[theme];
 
   const [event, setEvent] = useState<Event | null>(null);
@@ -109,7 +109,7 @@ export default function EventDetails() {
 
         <View style={[styles.content, { backgroundColor: colors.background }]}>
           <Text style={[styles.title, { color: colors.text }]}>
-            {event.title}
+            {event.title}/ {theme}
           </Text>
 
           <View

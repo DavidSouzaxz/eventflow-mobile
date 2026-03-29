@@ -137,7 +137,7 @@ export default function Settings() {
                 {
                   text: "Sair",
                   style: "destructive",
-                  onPress: () => signOut(), // Chama a função que limpa storage e redireciona
+                  onPress: () => signOut(),
                 },
               ],
             );
