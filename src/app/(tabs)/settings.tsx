@@ -1,7 +1,9 @@
 import { useAuth } from "@/app/contexts/AuthContexts";
+import { Button } from "@/components/Button";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import {
   Alert,
@@ -16,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { api } from "../services/api";
 
 export default function Settings() {
   const { user, signOut, theme, toggleTheme } = useAuth();
@@ -24,12 +27,49 @@ export default function Settings() {
   const navigation = useNavigation();
   const [name, setName] = useState(user?.name);
   const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setImageUrl(result.assets[0].uri);
+    }
+  };
 
   const handleSaveProfile = async () => {
+    if (!name) return Alert.alert("Erro", "O nome não pode estar vazio.");
+
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+
+      if (imageUrl) {
+        const uriParts = imageUrl.split(".");
+        const fileType = uriParts[uriParts.length - 1];
+
+        formData.append("avatar", {
+          uri: imageUrl,
+          name: `avatar.${fileType}`,
+          type: `image/${fileType}`,
+        } as any);
+      }
+
+      await api.put("/profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
     } catch (error) {
+      console.error(error);
       Alert.alert("Erro", "Não foi possível atualizar o perfil.");
     } finally {
       setLoading(false);
@@ -94,12 +134,13 @@ export default function Settings() {
             value={name}
             onChangeText={setName}
           />
-          <TouchableOpacity
-            style={[styles.saveButton, { backgroundColor: colors.primary }]}
+
+          <Button
+            label="Salvar Alterações"
+            loading={loading}
+            style={styles.saveButton}
             onPress={handleSaveProfile}
-          >
-            <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-          </TouchableOpacity>
+          />
         </View>
 
         {/* Card de Preferências */}
@@ -181,7 +222,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  saveButtonText: { color: "#FFF", fontWeight: "700" },
   row: {
     flexDirection: "row",
     alignItems: "center",

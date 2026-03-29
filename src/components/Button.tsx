@@ -9,21 +9,26 @@ import {
 type ButtonProps = TouchableOpacityProps & {
   label: string;
   loading: boolean;
+  style?: any;
 };
 
-export function Button({ label, loading, ...rest }: ButtonProps) {
+export function Button({ label, loading, style, ...rest }: ButtonProps) {
   return (
-    <TouchableOpacity style={style.container} activeOpacity={0.7} {...rest}>
+    <TouchableOpacity
+      style={[styles.container, style]}
+      activeOpacity={0.7}
+      {...rest}
+    >
       {loading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <Text style={style.label}>{label}</Text>
+        <Text style={styles.label}>{label}</Text>
       )}
     </TouchableOpacity>
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 48,

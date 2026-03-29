@@ -1,6 +1,7 @@
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Link } from "expo-router";
+import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 
 export default function Signup() {
+  const [loading, setLoading] = useState(false);
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -27,7 +29,7 @@ export default function Signup() {
             <Input placeholder="email" />
             <Input placeholder="Senha" secureTextEntry />
             <Input placeholder="Confirmar Senha" secureTextEntry />
-            <Button label="Entrar" />
+            <Button label="Entrar" loading={loading} />
           </View>
           <Text style={styles.footerText}>
             Já tem uma conta?{" "}
